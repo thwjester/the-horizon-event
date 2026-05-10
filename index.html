@@ -8,8 +8,8 @@
         @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;700&display=swap');
         
         :root {
-            --glow-red: 0 0 20px rgba(255, 0, 0, 1), 0 0 40px rgba(255, 0, 0, 0.6);
-            --glow-white: 0 0 20px rgba(255, 255, 255, 1), 0 0 40px rgba(255, 255, 255, 0.8);
+            --glow-red: 0 0 15px rgba(255, 0, 0, 0.8), 0 0 30px rgba(255, 0, 0, 0.4);
+            --glow-white: 0 0 12px rgba(255, 255, 255, 0.7), 0 0 25px rgba(255, 255, 255, 0.3);
         }
 
         body {
@@ -19,29 +19,29 @@
 
         .black-fog {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 105; pointer-events: none;
-            background: radial-gradient(circle at center, transparent 10%, rgba(0,0,0,0.9) 100%);
+            background: radial-gradient(circle at center, transparent 20%, rgba(0,0,0,0.85) 100%);
         }
 
         .vhs-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 100; pointer-events: none;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%);
-            background-size: 100% 3px; opacity: 0.7;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
+            background-size: 100% 3px; opacity: 0.6;
         }
 
         #bg-wrap { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
         
-        /* REGULAR TUMBLING WORDS */
+        /* TUMBLING FALL ANIMATION */
         .rain-word {
-            position: absolute; color: #ffe6f2; font-size: 0.75rem; opacity: 0.35; 
+            position: absolute; color: #ffe6f2; font-size: 0.75rem; opacity: 0.3; 
             pointer-events: none; white-space: nowrap;
-            animation: tumble-fall 1.3s linear forwards;
+            animation: tumble-fall 1.5s linear forwards;
         }
         
-        /* THE GLOWING WORDS - EXTREME VISIBILITY */
+        /* 3D SPINNING RARE WORDS */
         .rare-drop {
-            position: absolute; color: #fff; font-size: 1.5rem; font-weight: 900;
-            text-shadow: var(--glow-white); cursor: pointer; z-index: 200;
-            animation: tumble-fall-rare 8s linear forwards, 3d-spin 1.5s linear infinite;
+            position: absolute; color: #fff; font-size: 1.3rem; font-weight: 700;
+            text-shadow: var(--glow-white); cursor: pointer; z-index: 110;
+            animation: tumble-fall-rare 9s linear forwards, 3d-spin 2s linear infinite;
         }
 
         /* --- UI TOP LEFT --- */
@@ -49,12 +49,15 @@
             position: absolute; top: 40px; left: 40px; z-index: 110; 
             animation: path-a 5s ease-in-out infinite; 
         }
+        .source-data { font-size: 0.85rem; opacity: 0.9; letter-spacing: 2px; text-shadow: var(--glow-white); }
+        
         #cmd-section { display: none; margin-top: 25px; animation: path-c-input 6s ease-in-out infinite; }
         #cmd-input {
-            background: transparent; border: none; border-bottom: 2px solid #fff;
+            background: transparent; border: none; border-bottom: 1px solid rgba(255,255,255,0.4);
             color: #fff; font-family: 'Fira+Code', monospace; outline: none;
-            width: 350px; font-size: 1.1rem; letter-spacing: 4px; padding-bottom: 8px;
+            width: 320px; font-size: 1rem; letter-spacing: 3px; padding-bottom: 5px;
         }
+        #cmd-input.error { color: #ff0000; text-shadow: var(--glow-red); }
 
         /* --- UI BOTTOM RIGHT --- */
         .ui-bottom-right { position: absolute; bottom: 60px; right: 60px; z-index: 50; text-align: right; }
@@ -62,41 +65,44 @@
             position: relative; height: 7rem; width: 650px; display: flex; align-items: center; justify-content: flex-end;
             animation: path-b 8s ease-in-out infinite;
         }
-        .timer-ui { display: flex; gap: 12px; align-items: baseline; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
-        .sep { font-size: 3.5rem; opacity: 0.6; }
-        .val { font-size: 5.5rem; letter-spacing: -3px; font-weight: 300; }
-        .lab { font-size: 0.7rem; opacity: 0.5; letter-spacing: 5px; }
+        .timer-ui { display: flex; gap: 10px; align-items: baseline; text-shadow: var(--glow-white); }
+        .sep { font-size: 3rem; opacity: 0.5; margin: 0 4px; }
+        .val { font-size: 5rem; letter-spacing: -3px; font-weight: 300; }
+        .lab { font-size: 0.65rem; opacity: 0.4; letter-spacing: 4px; display: block; }
         
         #glitch-overlay { 
-            display: none; position: absolute; right: 0; width: 100%; font-size: 5rem; 
-            font-weight: 800; text-align: right; animation: glitch-shake 0.1s infinite;
+            display: none; position: absolute; right: 0; width: 100%; font-size: 4.5rem; 
+            font-weight: 700; text-align: right; animation: glitch-shake 0.1s infinite;
         }
 
         .horizon-tag { 
-            margin-top: 25px; color: #ff0000; font-size: 1.1rem; letter-spacing: 12px; 
+            margin-top: 20px; color: #ff0000; font-size: 1rem; letter-spacing: 10px; 
             font-weight: 700; text-shadow: var(--glow-red); 
             animation: path-d 6s ease-in-out infinite;
         }
 
-        /* --- ANIMATIONS --- */
+        /* --- KEYFRAMES --- */
+        
+        /* Combined Translation and Rotation for a true "Spin as it Falls" effect */
         @keyframes tumble-fall { 
-            0% { transform: translate(60vw, -15vh) rotate(0deg); opacity: 0; } 
-            20% { opacity: 0.5; }
-            100% { transform: translate(-60vw, 115vh) rotate(1080deg); opacity: 0; } 
+            0% { transform: translate(50vw, -10vh) rotate(0deg); opacity: 0; } 
+            15% { opacity: 0.4; }
+            100% { transform: translate(-50vw, 110vh) rotate(720deg); opacity: 0; } 
         }
 
         @keyframes tumble-fall-rare { 
-            0% { transform: translate(50vw, -20vh); opacity: 0; } 
-            5% { opacity: 1; }
-            100% { transform: translate(-50vw, 120vh); opacity: 0; } 
+            0% { transform: translate(50vw, -10vh); opacity: 0; } 
+            10% { opacity: 1; }
+            100% { transform: translate(-50vw, 110vh); opacity: 0; } 
         }
 
         @keyframes 3d-spin { 0% { transform: rotateY(0deg); } 100% { transform: rotateY(360deg); } }
-        @keyframes path-a { 0%, 100% { transform: translate(0,0) rotate(0.2deg); } 50% { transform: translate(10px, -6px) rotate(-0.5deg); } }
-        @keyframes path-b { 0%, 100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-20px, -10px) scale(1.05); } }
-        @keyframes path-c-input { 0%, 100% { transform: translate(0,0); } 50% { transform: translate(12px, 4px); } }
-        @keyframes path-d { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(-40px); } }
-        @keyframes glitch-shake { 0% { transform: translate(-6px, 6px); } 50% { transform: translate(6px, -6px); } }
+        
+        @keyframes path-a { 0%, 100% { transform: translate(0,0) rotate(0.2deg); } 50% { transform: translate(8px, -5px) rotate(-0.5deg); } }
+        @keyframes path-b { 0%, 100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-15px, -8px) scale(1.04); } }
+        @keyframes path-c-input { 0%, 100% { transform: translate(0,0); } 50% { transform: translate(10px, 3px); } }
+        @keyframes path-d { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(-30px); } }
+        @keyframes glitch-shake { 0% { transform: translate(-5px, 5px); } 50% { transform: translate(5px, -5px); } }
 
     </style>
 </head>
@@ -134,44 +140,55 @@
 
     <script>
         const targetDate = new Date("2026-06-27T00:00:00Z").getTime();
-        const rainWords = ["when", "where", "what", "why", "and", "key", "no", "yes", "go"];
-        const rareWords = ["HARMONY", "PERFECTION", "SKY", "THE_END"];
-        const redPool = ["ITS TICKING!", "FOOLISH!", "SUMMER!!", "BORING."];
-        const greenPool = ["the children..", "prophecy is a lie..", "save them!"];
+        const rainWords = ["when", "where", "what", "why", "and", "key", "maybe", "no", "yes", "go", "was", "were"];
+        const rareWords = ["harmony", "perfection", "sky"];
+        const redPool = ["ITS TICKING!", "FOOLISH!", "SUMMER!!", "BORING.", "THATS IT?"];
+        const greenPool = ["the children..", "prophecy is a lie..", "they suffer!"];
         
         const bg = document.getElementById('bg-wrap');
         const cmdInput = document.getElementById('cmd-input');
         let rareActive = true; 
 
-        // Spawn regular storm fast
+        cmdInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                this.classList.add('error');
+                this.value = "ERROR..";
+                this.disabled = true;
+                setTimeout(() => {
+                    this.classList.remove('error');
+                    this.value = "";
+                    this.disabled = false;
+                    this.focus();
+                }, 400);
+            }
+        });
+
         function spawnRain() {
             const w = document.createElement('div');
             w.className = 'rain-word';
             w.innerText = rainWords[Math.floor(Math.random() * rainWords.length)];
-            w.style.left = (Math.random() * 150 - 25) + 'vw';
+            // Vary the start position for a natural look
+            w.style.left = (Math.random() * 140 - 20) + 'vw';
             w.style.top = '-10vh';
             bg.appendChild(w);
-            setTimeout(() => { if(w.parentNode) w.remove(); }, 1400);
+            setTimeout(() => { if(w.parentNode) w.remove(); }, 1500);
         }
 
-        // Spawn rare glowing word
         function spawnRare() {
             if (!rareActive) return;
             const w = document.createElement('div');
             w.className = 'rare-drop';
             w.innerText = rareWords[Math.floor(Math.random() * rareWords.length)];
-            w.style.left = (Math.random() * 80 + 10) + 'vw'; // Center-ish spawn
-            w.style.top = '-15vh';
-            
+            w.style.left = (Math.random() * 140 - 20) + 'vw';
+            w.style.top = '-10vh';
             w.onclick = function() {
                 rareActive = false; 
                 document.getElementById('cmd-section').style.display = 'block';
                 cmdInput.focus();
                 this.remove(); 
             };
-            
             bg.appendChild(w);
-            setTimeout(() => { if(w.parentNode) w.remove(); }, 8500);
+            setTimeout(() => { if(w.parentNode) w.remove(); }, 9000);
         }
 
         function update() {
@@ -187,6 +204,7 @@
             const timer = document.getElementById('timer-display');
             const glitch = document.getElementById('glitch-overlay');
             const roll = Math.random() * 100;
+
             if (roll <= 27) {
                 glitch.innerText = greenPool[Math.floor(Math.random() * greenPool.length)];
                 glitch.style.color = "#44ff44";
@@ -194,19 +212,19 @@
                 glitch.innerText = redPool[Math.floor(Math.random() * redPool.length)];
                 glitch.style.color = "#ff3333";
             }
+
             timer.style.visibility = 'hidden';
             glitch.style.display = 'block';
-            setTimeout(() => { glitch.style.display = 'none'; timer.style.visibility = 'visible'; }, 220);
+            setTimeout(() => { 
+                glitch.style.display = 'none'; 
+                timer.style.visibility = 'visible'; 
+            }, 220);
         }
 
         setInterval(update, 1000);
         setInterval(triggerGlitch, 2700);
-        setInterval(spawnRain, 40); 
-        
-        // Spawn one immediately, then every 10s
-        spawnRare();
+        setInterval(spawnRain, 45); 
         setInterval(spawnRare, 10000); 
-
         update();
     </script>
 </body>
