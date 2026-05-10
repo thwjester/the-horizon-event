@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COORD: ███-██-██ // TIMEOUT</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400&display=swap');
+        
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            font-family: 'Fira+Code', monospace;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+        /* Ambient Motion */
+        .lines-layer {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1; pointer-events: none; opacity: 0.15;
+        }
+        .motion-line {
+            position: absolute; background: #ffffff;
+            height: 1px; width: 100%;
+            animation: drift 10s linear infinite;
+        }
+        @keyframes drift {
+            0% { transform: translateY(-100vh); }
+            100% { transform: translateY(100vh); }
+        }
+
+        /* The Eye (The Watcher) */
+        .eye-container {
+            margin-bottom: 20px;
+            z-index: 10;
+            animation: breathe 4s ease-in-out infinite;
+        }
+        .eye-lid {
+            width: 60px;
+            height: 30px;
+            border-bottom: 2px solid #ffffff;
+            border-radius: 0 0 100px 100px;
+            position: relative;
+        }
+
+        /* Text Animations */
+        .breathe-text {
+            animation: breathe 3s ease-in-out infinite;
+        }
+
+        @keyframes breathe {
+            0%, 100% { opacity: 0.4; transform: scale(0.98); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+
+        .header {
+            position: absolute; top: 40px; left: 40px;
+            font-size: 0.7rem; letter-spacing: 2px; z-index: 10;
+        }
+
+        .timer-container {
+            display: flex; gap: 30px; z-index: 10;
+        }
+
+        .unit { text-align: center; }
+        .val { font-size: 4rem; display: block; }
+        .lab { font-size: 0.6rem; opacity: 0.5; letter-spacing: 3px; }
+
+        /* Glitch Overlays */
+        #glitch-text {
+            display: none;
+            font-size: 1.5rem;
+            text-align: center;
+            letter-spacing: 10px;
+            z-index: 20;
+            color: #ffffff;
+        }
+
+        .error-text {
+            position: absolute; bottom: 40px;
+            color: #ff0000; font-size: 0.7rem;
+            letter-spacing: 8px; animation: flicker 0.2s infinite;
+        }
+        @keyframes flicker {
+            0% { opacity: 0.8; } 50% { opacity: 1; } 100% { opacity: 0.9; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="lines-layer" id="bg"></div>
+
+    <div class="header breathe-text">
+        [ SOURCE: v{6$B(d!P ]<br>
+        [ TARGET: ANCHOR_02_REDACTED ]
+    </div>
+
+    <div class="eye-container">
+        <div class="eye-lid"></div>
+    </div>
+
+    <div id="timer-ui" class="timer-container">
+        <div class="unit"><span class="val" id="d">000</span><span class="lab">Days</span></div>
+        <div class="unit"><span class="val" id="h">00</span><span class="lab">Hrs</span></div>
+        <div class="unit"><span class="val" id="m">00</span><span class="lab">Min</span></div>
+        <div class="unit"><span class="val" id="s">00</span><span class="lab">Sec</span></div>
+    </div>
+
+    <div id="glitch-text"></div>
+
+    <div class="error-text">CRITICAL_EVENT_HORIZON: 27.06.2026</div>
+
+    <script>
+        // BG Lines
+        const bg = document.getElementById('bg');
+        for (let i = 0; i < 30; i++) {
+            const l = document.createElement('div');
+            l.className = 'motion-line';
+            l.style.top = Math.random() * 100 + 'vh';
+            l.style.animationDelay = Math.random() * 10 + 's';
+            bg.appendChild(l);
+        }
+
+        // Countdown Logic
+        const target = new Date("2026-06-27T00:00:00Z").getTime();
+        const timerUI = document.getElementById('timer-ui');
+        const glitchUI = document.getElementById('glitch-text');
+
+        const phrases = ["COME ON!?", "THE SUMMER?!", "THE SKY!!", "YOU WONT GET ME!?", "HOW DISSAPONTING!!"];
+        const rarePhrases = ["the two child?", "how much they have to suffer?", "poor kids.", "save us!"];
+
+        function update() {
+            const now = new Date().getTime();
+            const diff = target - now;
+            
+            document.getElementById('d').innerText = String(Math.floor(diff / 86400000)).padStart(3, '0');
+            document.getElementById('h').innerText = String(Math.floor((diff % 86400000) / 3600000)).padStart(2, '0');
+            document.getElementById('m').innerText = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
+            document.getElementById('s').innerText = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
+        }
+
+        function triggerGlitch() {
+            // Check for 1% chance
+            const isRare = Math.random() <= 0.01;
+            const selectedList = isRare ? rarePhrases : phrases;
+            const randomText = selectedList[Math.floor(Math.random() * selectedList.length)];
+
+            // Swap UI
+            timerUI.style.display = 'none';
+            glitchUI.innerText = randomText;
+            glitchUI.style.display = 'block';
+
+            // Return to normal after 3 seconds
+            setTimeout(() => {
+                glitchUI.style.display = 'none';
+                timerUI.style.display = 'flex';
+            }, 3000);
+        }
+
+        setInterval(update, 1000);
+        setInterval(triggerGlitch, 27000); // Trigger every 27 seconds
+        update();
+    </script>
+</body>
+</html>
