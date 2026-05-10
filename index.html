@@ -21,7 +21,7 @@
             text-transform: uppercase;
         }
 
-        /* Ambient Motion */
+        /* Fast Background & Vertical/Horizontal Scanlines */
         .lines-layer {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -30,117 +30,140 @@
         .motion-line {
             position: absolute; background: #ffffff;
             height: 1px; width: 100%;
-            animation: drift 10s linear infinite;
+            animation: drift 2.5s linear infinite;
         }
+        .scanline-h {
+            position: absolute; background: rgba(255, 255, 255, 0.3);
+            width: 100%; height: 1px;
+            left: 0; z-index: 2;
+            animation: scan-v 6s linear infinite;
+        }
+
         @keyframes drift {
             0% { transform: translateY(-100vh); }
             100% { transform: translateY(100vh); }
         }
+        @keyframes scan-v {
+            0% { top: -10%; }
+            100% { top: 110%; }
+        }
 
-        /* Top-Left Header with Shine Effect */
+        /* Heavy / Slow Signal Movement for fixed UI */
+        .heavy-signal {
+            font-weight: 300;
+            letter-spacing: 8px;
+            color: #ff0000;
+            animation: fast-flicker 0.15s infinite, slow-heavy-sway 8s ease-in-out infinite;
+        }
+
+        @keyframes fast-flicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; text-shadow: 2px 0 #ff0000, -2px 0 #000; }
+        }
+
+        @keyframes slow-heavy-sway {
+            0%, 100% { transform: translate(-20px, 0px) rotate(-0.5deg); }
+            50% { transform: translate(20px, 5px) rotate(0.5deg); }
+        }
+
+        /* Top-Left Header */
         .header-left {
             position: absolute; top: 40px; left: 40px;
             font-size: 0.75rem; letter-spacing: 2px; z-index: 20;
             line-height: 1.5;
-            animation: shine-breathe 4s ease-in-out infinite;
+            animation: shine-breathe 4s ease-in-out infinite, slow-heavy-sway 10s ease-in-out infinite;
         }
 
-        /* New Top Warning (formerly above eye) */
-        .top-warning {
-            position: absolute; top: 40px;
-            color: #ff0000; font-size: 0.8rem;
-            letter-spacing: 8px; z-index: 20;
-            font-weight: 300;
-            animation: flicker 0.2s infinite;
+        @keyframes shine-breathe {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; text-shadow: 0 0 5px #fff; }
         }
 
-        /* The Closed Eye */
-        .eye-container {
-            margin-bottom: 30px;
+        /* Static UI Warnings */
+        .top-warning { position: absolute; top: 40px; font-size: 0.8rem; z-index: 20; }
+        .footer-bottom { position: absolute; bottom: 40px; font-size: 0.8rem; z-index: 20; }
+
+        /* Locked Layout Section */
+        .main-display {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             z-index: 10;
+            height: 300px; /* Locked height so content swap doesn't move the eye */
         }
+
+        .eye-container {
+            margin-bottom: 50px; /* Constant gap */
+        }
+
         .eye-lid {
-            width: 120px;
-            height: 40px;
+            width: 120px; height: 40px;
             border-bottom: 3px solid #ffffff;
             border-radius: 0 0 120px 120px;
         }
 
-        /* Footer Error Message */
-        .footer-bottom {
-            position: absolute; bottom: 40px;
-            color: #ff0000; font-size: 0.8rem;
-            letter-spacing: 8px; z-index: 20;
-            font-weight: 300;
-            animation: flicker 0.2s infinite;
+        /* Word Swap Area */
+        .content-swap {
+            height: 100px; /* Locked height for the words */
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        /* Main Display */
-        .main-display {
-            display: flex; flex-direction: column; align-items: center; z-index: 10;
-        }
-        .timer-container {
-            display: flex; gap: 30px;
-        }
-        .unit { text-align: center; }
+        .timer-container { display: flex; gap: 30px; }
         .val { font-size: 4.5rem; display: block; font-weight: 400; letter-spacing: -2px; }
         .lab { font-size: 0.6rem; opacity: 0.5; letter-spacing: 3px; }
 
-        /* Glitch Overlay - Thin font weight matched */
+        /* 2.7s Glitch Words */
         #glitch-overlay {
             display: none;
             font-size: 3rem;
-            color: #ff0000;
             text-align: center;
+            color: #ff0000;
             font-weight: 300;
             letter-spacing: 8px;
-            animation: tech-shake 0.1s infinite;
+            animation: fast-flicker 0.1s infinite, jitter-heavy 0.2s infinite;
         }
 
-        /* Animations */
-        @keyframes shine-breathe {
-            0%, 100% { opacity: 0.3; text-shadow: 0 0 0px #fff; }
-            50% { opacity: 1; text-shadow: 0 0 8px rgba(255,255,255,0.5); }
-        }
-
-        @keyframes flicker {
-            0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.7; }
-        }
-
-        @keyframes tech-shake {
-            0% { transform: translate(4px, 0) skew(3deg); }
-            50% { transform: translate(-4px, 1px) skew(-3deg); }
-            100% { transform: translate(0, 0); }
+        @keyframes jitter-heavy {
+            0% { transform: translate(8px, 0); }
+            50% { transform: translate(-8px, 3px); }
+            100% { transform: translate(0, -2px); }
         }
     </style>
 </head>
 <body>
 
-    <div class="lines-layer" id="bg"></div>
+    <div class="lines-layer" id="bg">
+        <div class="scanline-h"></div>
+        <div class="scanline-h" style="animation-delay: -3s;"></div>
+    </div>
 
     <div class="header-left">
         [ SOURCE: v{6$B(d!P ]<br>
         [ TARGET: ANCHOR_02_REDACTED ]
     </div>
 
-    <div class="top-warning">███ IS COMING.</div>
+    <div class="top-warning heavy-signal">███ IS COMING.</div>
 
     <div class="main-display">
         <div class="eye-container">
             <div class="eye-lid"></div>
         </div>
 
-        <div id="timer-ui" class="timer-container">
-            <div class="unit"><span class="val" id="d">000</span><span class="lab">DAYS</span></div>
-            <div class="unit"><span class="val" id="h">00</span><span class="lab">HRS</span></div>
-            <div class="unit"><span class="val" id="m">00</span><span class="lab">MIN</span></div>
-            <div class="unit"><span class="val" id="s">00</span><span class="lab">SEC</span></div>
+        <div class="content-swap">
+            <div id="timer-ui" class="timer-container">
+                <div class="unit"><span class="val" id="d">000</span><span class="lab">DAYS</span></div>
+                <div class="unit"><span class="val" id="h">00</span><span class="lab">HRS</span></div>
+                <div class="unit"><span class="val" id="m">00</span><span class="lab">MIN</span></div>
+                <div class="unit"><span class="val" id="s">00</span><span class="lab">SEC</span></div>
+            </div>
+            <div id="glitch-overlay"></div>
         </div>
-
-        <div id="glitch-overlay"></div>
     </div>
 
-    <div class="footer-bottom">CRITICAL_EVENT_HORIZON: 27.06.2026</div>
+    <div class="footer-bottom heavy-signal">CRITICAL_EVENT_HORIZON: 27.06.2026</div>
 
     <script>
         const bg = document.getElementById('bg');
@@ -148,22 +171,20 @@
             const l = document.createElement('div');
             l.className = 'motion-line';
             l.style.top = Math.random() * 100 + 'vh';
-            l.style.animationDelay = Math.random() * 10 + 's';
+            l.style.animationDelay = Math.random() * 5 + 's';
             bg.appendChild(l);
         }
 
-        const standardPhrases = ["COME ON!?", "THE SUMMER?!", "THE SKY!!", "YOU WONT GET ME!?", "HOW DISSAPONTING!!", "IS THIS ALL YOU GOT?!", "REAL WEAK!!", "CANT BELIVE YOUR WITH THEM!!", "LOOSERR!!", "WHATEVER BIG GUY!!"];
-        const rarePhrases = ["the two child?", "how much they have to suffer!", "propechy lied."];
+        const phrases = ["COME ON!?", "THE SUMMER?!", "THE SKY!!", "YOU WONT GET ME!?", "HOW DISSAPONTING!!", "IS THIS ALL YOU GOT?!", "REAL WEAK!!", "CANT BELIVE YOUR WITH THEM!!", "LOOSERR!!", "WHATEVER BIG GUY!!"];
+        const rare = ["the two child?", "how much they have to suffer!", "propechy lied."];
 
         const target = new Date("2026-06-27T00:00:00Z").getTime();
         const timerUI = document.getElementById('timer-ui');
         const glitchUI = document.getElementById('glitch-overlay');
 
         function update() {
-            const now = new Date().getTime();
-            const diff = target - now;
+            const diff = target - new Date().getTime();
             if (diff <= 0) return;
-
             document.getElementById('d').innerText = String(Math.floor(diff / 86400000)).padStart(3, '0');
             document.getElementById('h').innerText = String(Math.floor((diff % 86400000) / 3600000)).padStart(2, '0');
             document.getElementById('m').innerText = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
@@ -172,13 +193,9 @@
 
         function triggerGlitch() {
             const isRare = Math.random() <= 0.01;
-            const chosenList = isRare ? rarePhrases : standardPhrases;
-            const text = chosenList[Math.floor(Math.random() * chosenList.length)];
-
+            glitchUI.innerText = (isRare ? rare : phrases)[Math.floor(Math.random() * (isRare ? rare.length : phrases.length))];
             timerUI.style.display = 'none';
-            glitchUI.innerText = text;
             glitchUI.style.display = 'block';
-
             setTimeout(() => {
                 glitchUI.style.display = 'none';
                 timerUI.style.display = 'flex';
@@ -186,7 +203,7 @@
         }
 
         setInterval(update, 1000);
-        setInterval(triggerGlitch, 27000);
+        setInterval(triggerGlitch, 2700);
         update();
     </script>
 </body>
