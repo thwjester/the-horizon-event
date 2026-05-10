@@ -37,28 +37,52 @@
             100% { transform: translateY(100vh); }
         }
 
-        /* The Eye (The Watcher) */
+        /* The Eye */
         .eye-container {
             margin-bottom: 20px;
             z-index: 10;
-            animation: breathe 4s ease-in-out infinite;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         .eye-lid {
-            width: 60px;
-            height: 30px;
-            border-bottom: 2px solid #ffffff;
+            width: 80px;
+            height: 40px;
+            border: 2px solid #ffffff;
             border-radius: 0 0 100px 100px;
             position: relative;
+            background: black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            transition: all 0.05s;
+        }
+        /* Eye Opening State */
+        .eye-lid.open {
+            border-radius: 100px;
+            height: 50px;
+        }
+        .eye-text {
+            font-size: 0.5rem;
+            display: none;
+            color: #ff0000;
         }
 
-        /* Text Animations */
-        .breathe-text {
-            animation: breathe 3s ease-in-out infinite;
+        /* Crying Effect */
+        .tear {
+            position: absolute;
+            background: #ffffff;
+            width: 2px;
+            height: 10px;
+            top: 40px;
+            opacity: 0.6;
+            animation: cry 2s infinite;
         }
-
-        @keyframes breathe {
-            0%, 100% { opacity: 0.4; transform: scale(0.98); }
-            50% { opacity: 1; transform: scale(1); }
+        @keyframes cry {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(100px); opacity: 0; }
         }
 
         .header {
@@ -74,14 +98,21 @@
         .val { font-size: 4rem; display: block; }
         .lab { font-size: 0.6rem; opacity: 0.5; letter-spacing: 3px; }
 
-        /* Glitch Overlays */
+        /* Glitch Styles */
         #glitch-text {
             display: none;
-            font-size: 1.5rem;
+            font-size: 4rem; /* Matched to countdown size */
             text-align: center;
-            letter-spacing: 10px;
+            letter-spacing: 5px;
             z-index: 20;
             color: #ffffff;
+            animation: shake 0.1s infinite;
+        }
+
+        @keyframes shake {
+            0% { transform: translate(2px, 1px); }
+            50% { transform: translate(-1px, -2px); }
+            100% { transform: translate(1px, 2px); }
         }
 
         .error-text {
@@ -98,13 +129,17 @@
 
     <div class="lines-layer" id="bg"></div>
 
-    <div class="header breathe-text">
+    <div class="header">
         [ SOURCE: v{6$B(d!P ]<br>
         [ TARGET: ANCHOR_02_REDACTED ]
     </div>
 
     <div class="eye-container">
-        <div class="eye-lid"></div>
+        <div class="eye-lid" id="main-eye">
+            <span class="eye-text" id="eye-word">HELP!</span>
+        </div>
+        <div class="tear" style="left: 20px; animation-delay: 0.5s;"></div>
+        <div class="tear" style="left: 60px; animation-delay: 1.2s;"></div>
     </div>
 
     <div id="timer-ui" class="timer-container">
@@ -129,44 +164,54 @@
             bg.appendChild(l);
         }
 
-        // Countdown Logic
         const target = new Date("2026-06-27T00:00:00Z").getTime();
         const timerUI = document.getElementById('timer-ui');
         const glitchUI = document.getElementById('glitch-text');
+        const mainEye = document.getElementById('main-eye');
+        const eyeWord = document.getElementById('eye-word');
 
         const phrases = ["COME ON!?", "THE SUMMER?!", "THE SKY!!", "YOU WONT GET ME!?", "HOW DISSAPONTING!!"];
-        const rarePhrases = ["the two child?", "how much they have to suffer?", "poor kids.", "save us!"];
+        const eyePhrases = ["PLEASE.", "END!", "WHEN?", "SAVE ME!", "HELP!"];
 
         function update() {
             const now = new Date().getTime();
             const diff = target - now;
-            
             document.getElementById('d').innerText = String(Math.floor(diff / 86400000)).padStart(3, '0');
             document.getElementById('h').innerText = String(Math.floor((diff % 86400000) / 3600000)).padStart(2, '0');
             document.getElementById('m').innerText = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
             document.getElementById('s').innerText = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
         }
 
+        // Main Fast Glitch (Every 2.7s)
         function triggerGlitch() {
-            // Check for 1% chance
-            const isRare = Math.random() <= 0.01;
-            const selectedList = isRare ? rarePhrases : phrases;
-            const randomText = selectedList[Math.floor(Math.random() * selectedList.length)];
-
-            // Swap UI
+            const randomText = phrases[Math.floor(Math.random() * phrases.length)];
             timerUI.style.display = 'none';
             glitchUI.innerText = randomText;
             glitchUI.style.display = 'block';
 
-            // Return to normal after 3 seconds
             setTimeout(() => {
                 glitchUI.style.display = 'none';
                 timerUI.style.display = 'flex';
-            }, 3000);
+            }, 200); // 0.2 seconds duration
+        }
+
+        // Eye Opening (Every 27s)
+        function triggerEye() {
+            const randomEyeText = eyePhrases[Math.floor(Math.random() * eyePhrases.length)];
+            eyeWord.innerText = randomEyeText;
+            
+            mainEye.classList.add('open');
+            eyeWord.style.display = 'block';
+
+            setTimeout(() => {
+                mainEye.classList.remove('open');
+                eyeWord.style.display = 'none';
+            }, 100); // 0.1 seconds duration
         }
 
         setInterval(update, 1000);
-        setInterval(triggerGlitch, 27000); // Trigger every 27 seconds
+        setInterval(triggerGlitch, 2700); 
+        setInterval(triggerEye, 27000);
         update();
     </script>
 </body>
